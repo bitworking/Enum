@@ -15,3 +15,8 @@ var_dump($month === Month::June);
 var_dump($month() === Month::June); // you must invoke the class
 
 ```
+
+## TODO:
+
+* strict parameter
+* need for __invoke method?
