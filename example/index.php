@@ -36,3 +36,6 @@ try {
 
 $month = new Month(Month::June);
 var_dump($month() === Month::June);
+var_dump($month == (string)Month::June);
+var_dump($month == (string)Month::August);
+
