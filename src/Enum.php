@@ -17,14 +17,14 @@
  */
 abstract class Enum
 {
-    
     const __default = null;
-    
-    private $_defaultName = '__default';    
-    private $_value;    
-    
+
+    private $_defaultName = '__default';
+    private $_value;
+    private $_constants;
+
     public function __construct($initialValue = null)
-    {        
+    {
         if (null === $initialValue) {
             $this->_value = static::__default;
         }
@@ -37,37 +37,42 @@ abstract class Enum
             }
         }
     }
-    
+
+    private function _getConstants()
+    {
+        if (null === $this->_constants) {
+            $class = new \ReflectionClass($this);
+            $this->_constants = $class->getConstants();
+        }
+        return $this->_constants;
+    }
+
     private function _hasValue($constantValue)
     {
-        $class = new \ReflectionClass($this);
-        $constants = $class->getConstants();
+        $constants = $this->_getConstants();
         foreach ($constants as $key => $value) {
-            if ($key != $this->_defaultName && $value == $constantValue) {
+            if ($value == $constantValue) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public function getConstList($includeDefault = false)
-    {        
-        $class = new \ReflectionClass($this);
-        $constants = $class->getConstants();
-        $array = array();
-        foreach ($constants as $key => $value) {
-            if (($key != $this->_defaultName) || ($key == $this->_defaultName && $includeDefault)) {
-                $array[$key] = $value;
-            }            
+    {
+        $constants = $this->_getConstants();
+        if ($includeDefault) {
+            return $constants;
         }
-        return $array;
+        unset($constants[$this->_defaultName]);
+        return $constants;
     }
-    
+
     public function getValue()
     {
         return $this->_value;
     }
-    
+
     public function __invoke()
     {
         return $this->_value;
@@ -75,7 +80,7 @@ abstract class Enum
 
     public function __toString()
     {
-        return (string) $this->_value;
+        return (string)$this->_value;
     }
-    
+
 }
